@@ -1,0 +1,164 @@
+import bcrypt from "bcrypt";
+import type { Request, Response } from "express";
+import userSchema from "../schema/userSchema.js";
+
+export const newUser = async (req: Request, res: Response) => {
+    try {
+        const {
+            name,
+            email,
+            password,
+            role = "user",
+            gender,
+            isActive = true,
+            preferences = {}
+        } = req.body;
+
+
+        if (!name || !email || !password || !gender) {
+            return res.status(400).json({
+                message: "Preencha os campos obrigatórios: name, email, password e gender."
+            });
+        }
+
+
+        const existingUser = await userSchema.findOne({ email });
+        if (existingUser) {
+            return res.status(409).json({
+                message: "Este e-mail já está cadastrado."
+            });
+        }
+
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+
+        const newUser = await userSchema.create({
+            name,
+            email,
+            password: hashedPassword,
+            role,
+            gender,
+            isActive,
+            preferences
+        });
+
+        return res.status(201).json({
+            id: newUser._id,
+            name: newUser.name,
+            email: newUser.email,
+            role: newUser.role,
+            gender: newUser.gender
+        });
+
+    } catch (err: any) {
+        console.error("Erro ao criar usuário:", err);
+        return res.status(500).json({ error: "Erro interno ao criar usuário." });
+    }
+};
+
+
+export const getUser = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.idUser;
+
+        if (!id) {
+            return res.status(400).json({ msg: "Id não informado" });
+        }
+
+        const user = await userSchema.findById(id);
+        return res.status(200).json(user);
+
+    } catch (error: any) {
+        console.error("Erro ao buscar usuário:", error);
+        return res.status(500).json({ error: "Erro interno ao buscar usuário." });
+    }
+};
+
+
+export const getUserAll = async (req: Request, res: Response) => {
+    try {
+        const users = await userSchema.find();
+        return res.status(200).json(users);
+
+    } catch (error: any) {
+        console.error("Erro ao buscar usuários:", error);
+        return res.status(500).json({ error: "Erro interno ao buscar usuários." });
+    }
+};
+
+
+export const updateUser = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.idUser;
+        const data = req.body;
+
+        if (!id) {
+            return res.status(400).json({ msg: "Id não informado" });
+        }
+
+        const updatedUser = await userSchema.findByIdAndUpdate(
+            id,
+            data,
+            { new: true }
+        );
+
+        return res.status(200).json(updatedUser);
+
+    } catch (err: any) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id;
+
+        if (!id) {
+            return res.status(400).json({ msg: "Id não informado" });
+        }
+
+        const deletedUser = await userSchema.findByIdAndDelete(id);
+
+        return res.status(200).json({
+            message: `O usuário de id ${id} foi deletado`,
+            deletedUser
+        });
+
+    } catch (err: any) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+
+export const loginUser = async (req: Request, res: Response) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ result: "Preencha email e senha" });
+        }
+
+        const user = await userSchema.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ result: "Usuário não encontrado" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(400).json({ result: "Senha inválida" });
+        }
+
+        return res.status(200).json({
+            result: true,
+            role: user.role
+        });
+
+    } catch (err: any) {
+        console.error("Erro no login:", err);
+        return res.status(500).json({ error: "Erro interno no servidor" });
+    }
+};
