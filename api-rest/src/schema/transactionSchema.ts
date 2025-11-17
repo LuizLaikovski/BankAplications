@@ -8,7 +8,7 @@ const transactioSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ["credit", "debit", "transfer", "refound"],
+        enum: ["credit", "debit", "transfer"],
         required: true
     },
     amount: {
@@ -33,7 +33,6 @@ const transactioSchema = new mongoose.Schema({
             return this.type === "transfer";
         }
     },
-
     // metadados flexíveis
     metadata: {
         type: Object,
