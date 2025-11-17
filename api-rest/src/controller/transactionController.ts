@@ -24,6 +24,7 @@ export const createTransaction = async (req: Request, res: Response) => {
             userExists.balance = userExists.balance - amount;
             targetUser.balance = targetUser.balance + amount;
 
+
             await userExists.save();
             await targetUser.save();
         }
@@ -45,6 +46,7 @@ export const createTransaction = async (req: Request, res: Response) => {
             amount,
             description,
             toUserId,
+            status: "completed",
             metadata
         });
 

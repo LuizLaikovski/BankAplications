@@ -30,7 +30,6 @@ export const newUser = async (req: Request, res: Response) => {
             });
         }
 
-
         const hashedPassword = await bcrypt.hash(password, 10);
 
 
