@@ -163,3 +163,25 @@ export const loginUser = async (req: Request, res: Response) => {
         return res.status(500).json({ error: "Erro interno no servidor" });
     }
 };
+
+
+export const updatePassword = async (req: Request, res: Response) => {
+    try {
+        const email = req.params.email;
+        const {password: newPassword} = req.body;
+
+        if (!email || !newPassword) return res.status(400).json({ message: "Campos Obrigátorios faltando" });
+
+        const user = await userSchema.findOne({email});
+
+        if (!user) return res.status(400).json({message: "Usuário não encontrado"});
+
+        user.password = await bcrypt.hash(newPassword, 10);
+
+        await user.save();
+
+        return res.status(200).json({message: "Senha alterada com sucesso"})
+    } catch(error) {
+        return res.status(500).json({ message: "Erro interno no servidor", error });
+    }
+};
