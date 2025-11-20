@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import transactionSchema from "../schema/transactionSchema.js";
 import userSchema from "../schema/userSchema.js";
+import { handleCredit, handleDebit, handleTransfer } from "../dto/tranactionDTO.js";
 
 
 export const createTransaction = async (req: Request, res: Response) => {
@@ -12,32 +13,31 @@ export const createTransaction = async (req: Request, res: Response) => {
         const userExists = await userSchema.findById(userId);
         if (!userExists) return res.status(404).json({ message: "Usuário não encontrado." });
 
-        
+
         if (type === "transfer") {
             if (!toUserId) return res.status(400).json({ message: "toUserId é obrigatório para transferências." });
 
-            const targetUser = await userSchema.findById(toUserId);
-            if (!targetUser) return res.status(404).json({ message: "Usuário de destino não encontrado." });
-            
-            if (amount > userExists.balance) return res.status(409).json({ message: "O saldo do usuario é insufinciente para a transferencia." })
-            
-            userExists.balance = userExists.balance - amount;
-            targetUser.balance = targetUser.balance + amount;
+            try {
+                await handleTransfer(userExists, amount, toUserId);
+            } catch (err: any) {
+                if (err.message === "TARGET_NOT_FOUND") return res.status(404).json({ message: "Usuário de destino não encontrado." });
 
-
-            await userExists.save();
-            await targetUser.save();
+                if (err.message === "INSUFFICIENT_FUNDS") return res.status(409).json({ message: "Saldo insuficiente para transferência." });
+            }
         }
 
         if (type === "credit") {
-            userExists.balance += amount;
-            userExists.save();
+            await handleCredit(userExists, amount);
         }
 
         if (type === "debit") {
-            if (amount > userExists.balance) return res.status(409).json({ message: "O saldo do usuario é insufinciente para o saque." });
-            userExists.balance -= amount;
-            userExists.save();
+            try {
+                await handleDebit(userExists, amount);
+            } catch (err: any) {
+                if (err.message === "INSUFFICIENT_FUNDS") return res.status(500).json({message: "Saldo insuficiente!"});
+
+                throw err;
+            }
         }
 
         const transaction = await transactionSchema.create({
