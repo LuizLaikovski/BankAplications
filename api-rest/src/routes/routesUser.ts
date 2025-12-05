@@ -8,7 +8,7 @@ routesUser.post("/login", loginUser);
 routesUser.get("/", getUserAll);
 routesUser.get("/:idUser", getUser);
 routesUser.put("/:idUser", updateUser);
-routesUser.put("/update/password/:email", updatePassword)
+routesUser.put("/update/password/", updatePassword)
 routesUser.delete("/delete/:id", deleteUser);
 
 export default routesUser;
