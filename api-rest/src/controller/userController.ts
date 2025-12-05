@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import type { Request, Response } from "express";
 import userSchema from "../schema/userSchema.js";
+import jwt from 'jsonwebtoken';
+import { jwtConfig } from "../config/jwtConfig.js";
 
 export const newUser = async (req: Request, res: Response) => {
     try {
@@ -153,10 +155,18 @@ export const loginUser = async (req: Request, res: Response) => {
             return res.status(400).json({ result: "Senha inválida" });
         }
 
+        const token = jwt.sign(
+            { id: user.id, email: user.email },
+            jwtConfig.secret,
+            { expiresIn: jwtConfig.expiresIn }
+        );
+
         return res.status(200).json({
-            result: true,
-            role: user.role,
             id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            token: token
         });
 
     } catch (err: any) {
