@@ -11,6 +11,7 @@ export const newUser = async (req: Request, res: Response) => {
             email,
             password,
             balance = 0,
+            keyPix,
             role = "user",
             gender,
             isActive = true,
@@ -40,6 +41,7 @@ export const newUser = async (req: Request, res: Response) => {
             email,
             password: hashedPassword,
             balance,
+            keyPix,
             role,
             gender,
             isActive,
@@ -203,5 +205,79 @@ export const updatePassword = async (req: Request, res: Response) => {
         return res.status(200).json({ message: "Senha alterada com sucesso" });
     } catch (error) {
         return res.status(500).json({ message: "Erro interno no servidor", error });
+    }
+};
+
+
+export const favotiteKeyPix = async (req: Request, res: Response) => {
+    try {
+        const { idUser, keyPix } = req.body;
+
+        if (!idUser || !keyPix) return res.status(400).json({ message: "Dados importantes faltando" });
+
+        const user = await userSchema.findById(idUser);
+        if (!user) return res.status(400).json({ message: "Usuario não encontrado" });
+
+        const userForKey = await userSchema.findOne({ keyPix: keyPix });
+        if (!userForKey) return res.status(404).json({ message: "Não foi encontrado um usuario com esta chave pix" })
+
+        if (!Array.isArray(user.favoriteKeys)) user.favoriteKeys = [] as any;
+
+        user.favoriteKeys.push({
+            idUser: userForKey.id,
+            keyPix: keyPix
+        });
+
+        await user.save();
+
+        return res.status(200).json({
+            message: "Chave favorita adicionada com sucesso!",
+            favoriteKeys: user.favoriteKeys
+        })
+    } catch (error) {
+        return res.status(500).json({ message: `Houve erro interno do servidor: ${error}` })
+    }
+}
+
+
+export const unFavoriteKeyPix = async (req: Request, res: Response) => {
+    try {
+        const { idUser, keyPix } = req.body;
+
+        if (!idUser || !keyPix) {
+            return res.status(400).json({ message: "Dados importantes faltando" });
+        }
+
+        const user = await userSchema.findById(idUser);
+        if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
+
+        // debug: vê o que tem no array antes
+        console.log("before:", user.favoriteKeys);
+
+        // garante que seja o DocumentArray do Mongoose
+        if (!user.favoriteKeys) {
+            return res.status(404).json({ message: "Nenhuma chave favorita cadastrada" });
+        }
+
+        // encontra o índice do subdocumento que tem keyPix igual
+        const idx = user.favoriteKeys.findIndex((fav: any) => String(fav.keyPix) === String(keyPix));
+
+        if (idx === -1) {
+            return res.status(404).json({ message: "Chave favorita não encontrada no usuário" });
+        }
+
+        // remove usando splice do DocumentArray (mantém tipos do Mongoose)
+        user.favoriteKeys.splice(idx, 1);
+
+        await user.save();
+
+        console.log("after:", user.favoriteKeys);
+
+        return res.status(200).json({
+            message: "Chave favorita removida com sucesso!",
+            favoriteKeys: user.favoriteKeys
+        });
+    } catch (error) {
+        return res.status(500).json({ message: `Houve um erro interno do servidor: ${error}` });
     }
 };

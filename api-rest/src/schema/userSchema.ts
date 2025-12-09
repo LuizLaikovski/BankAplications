@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
 
+const favotiteKeyPixSchema = new mongoose.Schema({
+    idUser: { type: String, required: true },
+    keyPix: { type: String, required: true }
+}, { _id: false });
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -20,6 +25,14 @@ const userSchema = new mongoose.Schema({
         type: Number,
         min: 0,
         default: 0
+    },
+    keyPix: {
+        type: String,
+        required: true
+    },
+    favoriteKeys: {
+        type: [favotiteKeyPixSchema],
+        required: []
     },
     role: {
         type: String,
