@@ -44,7 +44,7 @@ npm run dev
 <h2 id="routes">📍 Rotas da Aplicação</h2>
 
 
-## Rotas de Usuário (`/user`)
+### Rotas de Usuário (`/user`)
 
 As rotas de usuário são responsáveis pela autenticação, gerenciamento de contas e funcionalidades específicas do usuário, como a gestão de chaves PIX favoritas.
 
@@ -60,7 +60,7 @@ As rotas de usuário são responsáveis pela autenticação, gerenciamento de co
 | `POST` | `/user/favoritekeypix` | **Adicionar Chave PIX Favorita.** Adiciona uma nova chave PIX à lista de favoritas do usuário. **Requer autenticação.** |
 | `DELETE` | `/user/unfavoritekey` | **Remover Chave PIX Favorita.** Remove uma chave PIX da lista de favoritas do usuário. **Requer autenticação.** |
 
-## Rotas de Transação (`/transaction`)
+### Rotas de Transação (`/transaction`)
 
 As rotas de transação lidam com a criação, consulta, atualização e exclusão de transações financeiras.
 
@@ -72,7 +72,7 @@ As rotas de transação lidam com a criação, consulta, atualização e exclus�
 | `PUT` | `/transaction/updateTransaction/:id` | **Atualizar Transação.** Atualiza os detalhes de uma transação específica. **Requer autenticação.** |
 | `DELETE` | `/transaction/delete/:id` | **Deletar Transação.** Remove uma transação do sistema, identificada pelo seu ID. **Requer autenticação.** |
 
-## Estrutura da Aplicação
+### Estrutura da Aplicação
 
 A aplicação segue uma estrutura modular, com as rotas sendo definidas em arquivos separados e montadas no arquivo principal (`app.ts`):
 
@@ -88,7 +88,7 @@ A porta padrão de execução da API é `8080`.
 
 <h2 id="colab">🤝 Colaboradores</h2>
 
-Agradeço a todos os contribuidores do projeto.
+Agradeço a todos os contribuintes do projeto.
 
 <table>
   <tr>
