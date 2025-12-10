@@ -43,12 +43,48 @@ npm run dev
 
 <h2 id="routes">📍 Rotas da Aplicação</h2>
 
-​
-| route               | description                                          
-|----------------------|-----------------------------------------------------
-| <kbd>/authenticate</kbd>     | page that list all user info
-| <kbd>/login</kbd>     | page to login
-| <kbd>/dashboard</kbd>     | page that contains all user shopping and spences info
+
+## Rotas de Usuário (`/user`)
+
+As rotas de usuário são responsáveis pela autenticação, gerenciamento de contas e funcionalidades específicas do usuário, como a gestão de chaves PIX favoritas.
+
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `POST` | `/user/newUser` | **Criação de Novo Usuário.** Registra um novo usuário no sistema. |
+| `POST` | `/user/login` | **Login do Usuário.** Autentica um usuário existente, retornando um token de acesso (presumivelmente JWT). |
+| `GET` | `/user/` | **Obter Todos os Usuários.** Retorna uma lista de todos os usuários cadastrados. **Requer autenticação.** |
+| `GET` | `/user/:idUser` | **Obter Usuário por ID.** Retorna os dados de um usuário específico, identificado pelo seu ID. **Requer autenticação.** |
+| `PUT` | `/user/:idUser` | **Atualizar Usuário.** Atualiza as informações de um usuário específico. **Requer autenticação.** |
+| `PUT` | `/user/update/password` | **Atualizar Senha.** Permite que o usuário altere sua senha. **Requer autenticação.** |
+| `DELETE` | `/user/delete/:id` | **Deletar Usuário.** Remove um usuário do sistema, identificado pelo seu ID. **Requer autenticação.** |
+| `POST` | `/user/favoritekeypix` | **Adicionar Chave PIX Favorita.** Adiciona uma nova chave PIX à lista de favoritas do usuário. **Requer autenticação.** |
+| `DELETE` | `/user/unfavoritekey` | **Remover Chave PIX Favorita.** Remove uma chave PIX da lista de favoritas do usuário. **Requer autenticação.** |
+
+## Rotas de Transação (`/transaction`)
+
+As rotas de transação lidam com a criação, consulta, atualização e exclusão de transações financeiras.
+
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `POST` | `/transaction/newTransaction` | **Criar Nova Transação.** Registra uma nova transação financeira (ex: depósito, saque, transferência). **Requer autenticação.** |
+| `GET` | `/transaction/findOne/:id` | **Obter Transação por ID.** Retorna os detalhes de uma transação específica, identificada pelo seu ID. **Requer autenticação.** |
+| `GET` | `/transaction/` | **Obter Todas as Transações.** Retorna uma lista de todas as transações registradas no sistema. **Requer autenticação.** |
+| `PUT` | `/transaction/updateTransaction/:id` | **Atualizar Transação.** Atualiza os detalhes de uma transação específica. **Requer autenticação.** |
+| `DELETE` | `/transaction/delete/:id` | **Deletar Transação.** Remove uma transação do sistema, identificada pelo seu ID. **Requer autenticação.** |
+
+## Estrutura da Aplicação
+
+A aplicação segue uma estrutura modular, com as rotas sendo definidas em arquivos separados e montadas no arquivo principal (`app.ts`):
+
+*   **Rotas de Usuário:** Montadas sob o prefixo `/user`.
+*   **Rotas de Transação:** Montadas sob o prefixo `/transaction`.
+
+A porta padrão de execução da API é `8080`.
+
+**Exemplo de URL Base:** `http://localhost:8080`
+
+**Exemplo de Rota Completa (Login):** `POST http://localhost:8080/user/login`
+
 
 <h2 id="colab">🤝 Colaboradores</h2>
 
