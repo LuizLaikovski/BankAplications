@@ -13,31 +13,34 @@ export const createTransaction = async (req: Request, res: Response) => {
         const userExists = await userSchema.findById(userId);
         if (!userExists) return res.status(404).json({ message: "Usuário não encontrado." });
 
+        switch (type) {
+            case "transfer":
+                if (!toUserId) return res.status(400).json({ message: "toUserId é obrigatório para transferências." });
 
-        if (type === "transfer") {
-            if (!toUserId) return res.status(400).json({ message: "toUserId é obrigatório para transferências." });
+                try {
+                    await handleTransfer(userExists, amount, toUserId);
+                } catch (err: any) {
+                    if (err.message === "TARGET_NOT_FOUND") return res.status(404).json({ message: "Usuário de destino não encontrado." });
 
-            try {
-                await handleTransfer(userExists, amount, toUserId);
-            } catch (err: any) {
-                if (err.message === "TARGET_NOT_FOUND") return res.status(404).json({ message: "Usuário de destino não encontrado." });
+                    if (err.message === "INSUFFICIENT_FUNDS") return res.status(409).json({ message: "Saldo insuficiente para transferência." });
+                }
+                break;
 
-                if (err.message === "INSUFFICIENT_FUNDS") return res.status(409).json({ message: "Saldo insuficiente para transferência." });
-            }
-        }
+            case "credit":
+                await handleCredit(userExists, amount);
+                break;
 
-        if (type === "credit") {
-            await handleCredit(userExists, amount);
-        }
+            case "debit":
+                try {
+                    await handleDebit(userExists, amount);
+                } catch (err: any) {
+                    if (err.message === "INSUFFICIENT_FUNDS") return res.status(500).json({ message: "Saldo insuficiente!" });
 
-        if (type === "debit") {
-            try {
-                await handleDebit(userExists, amount);
-            } catch (err: any) {
-                if (err.message === "INSUFFICIENT_FUNDS") return res.status(500).json({message: "Saldo insuficiente!"});
-
-                throw err;
-            }
+                    throw err;
+                }
+                break;
+            default:
+                break;
         }
 
         const transaction = await transactionSchema.create({
@@ -63,12 +66,9 @@ export const getTransaction = async (req: Request, res: Response) => {
         const { id } = req.params;
 
         const transaction = await transactionSchema.findById(id);
-        if (!transaction) {
-            return res.status(404).json({ message: "Transação não encontrada." });
-        }
+        if (!transaction) return res.status(404).json({ message: "Transação não encontrada." });
 
         return res.status(200).json(transaction);
-
     } catch (err: any) {
         console.error("Erro ao buscar transação:", err);
         return res.status(500).json({ error: "Erro interno ao buscar transação." });
@@ -79,7 +79,6 @@ export const getAllTransactions = async (_req: Request, res: Response) => {
     try {
         const transactions = await transactionSchema.find();
         return res.status(200).json(transactions);
-
     } catch (err: any) {
         console.error("Erro ao listar transações:", err);
         return res.status(500).json({ error: "Erro interno ao listar transações." });
@@ -93,12 +92,9 @@ export const updateTransaction = async (req: Request, res: Response) => {
 
         const updated = await transactionSchema.findByIdAndUpdate(id, data, { new: true });
 
-        if (!updated) {
-            return res.status(404).json({ message: "Transação não encontrada." });
-        }
+        if (!updated) return res.status(404).json({ message: "Transação não encontrada." });
 
         return res.status(200).json(updated);
-
     } catch (err: any) {
         console.error("Erro ao atualizar transação:", err);
         return res.status(500).json({ error: "Erro interno ao atualizar transação." });
@@ -111,15 +107,12 @@ export const deleteTransaction = async (req: Request, res: Response) => {
 
         const deleted = await transactionSchema.findByIdAndDelete(id);
 
-        if (!deleted) {
-            return res.status(404).json({ message: "Transação não encontrada." });
-        }
+        if (!deleted) return res.status(404).json({ message: "Transação não encontrada." });
 
         return res.status(200).json({
             message: "Transação deletada com sucesso.",
             deleted
         });
-
     } catch (err: any) {
         console.error("Erro ao deletar transação:", err);
         return res.status(500).json({ error: "Erro interno ao deletar transação." });

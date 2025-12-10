@@ -6,25 +6,14 @@ import { jwtConfig } from "../config/jwtConfig.js";
 
 export const newUser = async (req: Request, res: Response) => {
     try {
-        const {
-            name,
-            email,
-            password,
-            balance = 0,
-            keyPix,
-            role = "user",
-            gender,
-            isActive = true,
-            preferences = {}
-        } = req.body;
+        const { name, email, password, balance = 0, keyPix, role = "user",
+            gender, isActive = true, preferences = {} } = req.body;
 
-
-        if (!name || !email || !password || !gender) {
+        if (!name || !email || !password || !gender || !keyPix) {
             return res.status(400).json({
-                message: "Preencha os campos obrigatórios: name, email, password e gender."
+                message: "Preencha os campos obrigatórios: name, email, password, gender e keyPix."
             });
         }
-
 
         const existingUser = await userSchema.findOne({ email });
         if (existingUser) {
@@ -35,18 +24,8 @@ export const newUser = async (req: Request, res: Response) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-
-        const newUser = await userSchema.create({
-            name,
-            email,
-            password: hashedPassword,
-            balance,
-            keyPix,
-            role,
-            gender,
-            isActive,
-            preferences
-        });
+        const newUser = await userSchema.create({ name, email, password: hashedPassword, balance, keyPix,
+            role, gender, isActive, preferences});
 
         return res.status(201).json({
             id: newUser._id,
@@ -85,7 +64,6 @@ export const getUserAll = async (req: Request, res: Response) => {
     try {
         const users = await userSchema.find();
         return res.status(200).json(users);
-
     } catch (error: any) {
         console.error("Erro ao buscar usuários:", error);
         return res.status(500).json({ error: "Erro interno ao buscar usuários." });
@@ -98,18 +76,11 @@ export const updateUser = async (req: Request, res: Response) => {
         const id = req.params.idUser;
         const data = req.body;
 
-        if (!id) {
-            return res.status(400).json({ msg: "Id não informado" });
-        }
+        if (!id) return res.status(400).json({ msg: "Id não informado" });
 
-        const updatedUser = await userSchema.findByIdAndUpdate(
-            id,
-            data,
-            { new: true }
-        );
+        const updatedUser = await userSchema.findByIdAndUpdate(id, data, { new: true });
 
         return res.status(200).json(updatedUser);
-
     } catch (err: any) {
         return res.status(500).json({ error: err.message });
     }
@@ -120,9 +91,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
 
-        if (!id) {
-            return res.status(400).json({ msg: "Id não informado" });
-        }
+        if (!id) return res.status(400).json({ msg: "Id não informado" });
 
         const deletedUser = await userSchema.findByIdAndDelete(id);
 
@@ -130,7 +99,6 @@ export const deleteUser = async (req: Request, res: Response) => {
             message: `O usuário de id ${id} foi deletado`,
             deletedUser
         });
-
     } catch (err: any) {
         return res.status(500).json({ error: err.message });
     }
@@ -141,21 +109,15 @@ export const loginUser = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ result: "Preencha email e senha" });
-        }
+        if (!email || !password) return res.status(400).json({ result: "Preencha email e senha" });
 
         const user = await userSchema.findOne({ email });
 
-        if (!user) {
-            return res.status(400).json({ result: "Usuário não encontrado" });
-        }
+        if (!user) return res.status(400).json({ result: "Usuário não encontrado" });
 
         const isMatch = await bcrypt.compare(password, user.password);
 
-        if (!isMatch) {
-            return res.status(400).json({ result: "Senha inválida" });
-        }
+        if (!isMatch) return res.status(400).json({ result: "Senha inválida" });
 
         const token = jwt.sign(
             { id: user.id, email: user.email },
@@ -170,7 +132,6 @@ export const loginUser = async (req: Request, res: Response) => {
             role: user.role,
             token: token
         });
-
     } catch (err: any) {
         console.error("Erro no login:", err);
         return res.status(500).json({ error: "Erro interno no servidor" });
@@ -244,34 +205,22 @@ export const unFavoriteKeyPix = async (req: Request, res: Response) => {
     try {
         const { idUser, keyPix } = req.body;
 
-        if (!idUser || !keyPix) {
-            return res.status(400).json({ message: "Dados importantes faltando" });
-        }
+        if (!idUser || !keyPix) return res.status(400).json({ message: "Dados importantes faltando" });
 
         const user = await userSchema.findById(idUser);
         if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
 
-        // debug: vê o que tem no array antes
-        console.log("before:", user.favoriteKeys);
+        if (!user.favoriteKeys) return res.status(404).json({ message: "Nenhuma chave favorita cadastrada" });
 
-        // garante que seja o DocumentArray do Mongoose
-        if (!user.favoriteKeys) {
-            return res.status(404).json({ message: "Nenhuma chave favorita cadastrada" });
-        }
-
-        // encontra o índice do subdocumento que tem keyPix igual
         const idx = user.favoriteKeys.findIndex((fav: any) => String(fav.keyPix) === String(keyPix));
 
         if (idx === -1) {
             return res.status(404).json({ message: "Chave favorita não encontrada no usuário" });
         }
 
-        // remove usando splice do DocumentArray (mantém tipos do Mongoose)
         user.favoriteKeys.splice(idx, 1);
 
         await user.save();
-
-        console.log("after:", user.favoriteKeys);
 
         return res.status(200).json({
             message: "Chave favorita removida com sucesso!",
