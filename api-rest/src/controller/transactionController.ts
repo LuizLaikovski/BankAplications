@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import transactionSchema from "../schema/transactionSchema.js";
 import userSchema from "../schema/userSchema.js";
 import { handleCredit, handleDebit, handleTransfer } from "../dto/tranactionDTO.js";
+import { json } from "stream/consumers";
 
 
 export const createTransaction = async (req: Request, res: Response) => {
@@ -74,6 +75,22 @@ export const getTransaction = async (req: Request, res: Response) => {
         return res.status(500).json({ error: "Erro interno ao buscar transação." });
     }
 };
+
+export const getValueUser = async (req: Request, res: Response) => {
+    try {
+        const { idUser } = req.body;
+
+        if (!idUser) return res.status(404).json({ message: "O campo ID não foi preenchido!" });
+
+        const user = await userSchema.findById(idUser);
+
+        if (!user) return res.status(404).json({ message: "Usuario não encontrado!" });
+        
+        return res.status(200).json(user.balance);
+    } catch (error) {
+        return res.status(500).json({ message: `Houve erro interno da aplicação: ${error}` })
+    }
+}
 
 export const getAllTransactions = async (_req: Request, res: Response) => {
     try {
