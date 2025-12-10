@@ -1,81 +1,48 @@
-[LICENSE__BADGE]: https://img.shields.io/github/license/LuizLaikovski/BankAplications?style=for-the-badge
-[TYPESCRIPT__BADGE]: https://img.shields.io/badge/typescript-D4FAFF?style=for-the-badge&logo=typescript
-[EXPRESS.JS]:https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB
-[NODE_BADGE]:https://img.shields.io/badge/node.js-24.1.0-43853D?style=for-the-badge&logo=node.js
-[MONGODB]:https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white
-[PROJECT__BADGE]: https://img.shields.io/badge/📱Visit_this_project-000?style=for-the-badge&logo=project
-[PROJECT__URL]: https://github.com/LuizLaikovski/BankAplications
-[PRS_BADGE]:https://img.shields.io/badge/PRs-welcome-green?style=for-the-badge
 
 <h1 align="center" style="font-weight: bold;">API BANK 💻</h1>
 
-![license][LICENSE__BADGE]
-![react][REACT__BADGE]
-![gatsby][GATSBY__BADGE]
-![angular][ANGULAR__BADGE]
-![vue][VUE__BADGE]
-![typescript][TYPESCRIPT__BADGE]
-![javascript][JAVASCRIPT__BADGE]
-![node][NODE_BADGE]
-![python][PYTHON_BADGE]
-![prs][PRS_BADGE]
-
-<details open="open">
-<summary>Table of Contents</summary>
- 
-- [📌 About](#started)
-- [🚀 Getting started](#started)
-  - [Prerequisites](#prerequisites)
-  - [Cloning](#cloning)
-  - [Starting](#starting)
-- [📍 Application Routes](#routes)
-- [🤝 Collaborators](#colab)
-- [📫 Contribute](#contribute)
-  
-</details>
+![LICENSE__BADGE](https://img.shields.io/github/license/LuizLaikovski/BankAplications?style=for-the-badge)
+![TYPESCRIPT__BADGE](https://img.shields.io/badge/typescript-D4FAFF?style=for-the-badge&logo=typescript)
+![EXPRESS.JS](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
+![NODE_BADGE](https://img.shields.io/badge/node.js-24.1.0-43853D?style=for-the-badge&logo=node.js)
+![MONGODB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+![PROJECT__BADGE](https://img.shields.io/badge/📱Visit_this_project-000?style=for-the-badge&logo=project)
+![PRS_BADGE](https://img.shields.io/badge/PRs-welcome-green?style=for-the-badge)
 
 
-<p align="center">
-    <img src="../.github/example.png" alt="Image Example" width="400px">
-</p>
+<h2 id="started">📌 Sobre</h2>
 
-<h2 id="started">📌 About</h2>
+Esta aplicação é uma API Bancaria e tem como objetivo praticar meus conhecimentos em express e typescript. Ela foi desenvolvida de maneira independente.
 
-Simple description of what your project do or how to use it.
+<h2 id="started">🚀 Como usar</h2>
 
-[![project][PROJECT__BADGE]][PROJECT__URL]
+Você deve clonar o repositório em sua maquina e executar ele.
 
-<h2 id="started">🚀 Getting started</h2>
+<h3>Pré-Requisitos</h3>
 
-Here you describe how to run your project locally
+Você deve possuir instalado em sua maquina:
 
-<h3>Prerequisites</h3>
+- [NodeJS](https://nodejs.org/pt)
+- [Git](https://git-scm.com/install)
 
-Here you list all prerequisites necessary for running your project. For example:
+<h3>Clonando</h3>
 
-- [NodeJS](https://github.com/)
-- [Git 2](https://github.com)
-
-<h3>Cloning</h3>
-
-How to clone your project
+Como clonar o projeto
 
 ```bash
-git clone your-project-url-in-github
+git clone https://github.com/LuizLaikovski/BankAplications.git
 ```
 
-<h3>Starting</h3>
-
-How to start your project
+<h3>Como Executar</h3>
 
 ```bash
-cd project-name
-npm some-command-to-run
+cd api-rest
+npm install
+npm run dev
 ```
 
-<h2 id="routes">📍 Application Routes</h2>
+<h2 id="routes">📍 Rotas da Aplicação</h2>
 
-Here you can list the main routes of your API, and what are their expected request bodies.
 ​
 | route               | description                                          
 |----------------------|-----------------------------------------------------
@@ -83,9 +50,9 @@ Here you can list the main routes of your API, and what are their expected reque
 | <kbd>/login</kbd>     | page to login
 | <kbd>/dashboard</kbd>     | page that contains all user shopping and spences info
 
-<h2 id="colab">🤝 Collaborators</h2>
+<h2 id="colab">🤝 Colaboradores</h2>
 
-Special thank you for all people that contributed for this project.
+Agradeço a todos os contribuidores do projeto.
 
 <table>
   <tr>
@@ -93,23 +60,7 @@ Special thank you for all people that contributed for this project.
       <a href="#">
         <img src="https://avatars.githubusercontent.com/u/160736729?v=4" width="100px;" alt="Fernanda Kipper Profile Picture"/><br>
         <sub>
-          <b>Fernanda Kipper</b>
+          <b>Luiz Laikovski</b>
         </sub>
       </a>
     </td>
-
-<h2 id="contribute">📫 Contribute</h2>
-
-Here you will explain how other developers can contribute to your project. For example, explaining how can create their branches, which patterns to follow and how to open an pull request
-
-1. `git clone https://github.com/Fernanda-Kipper/text-editor.git`
-2. `git checkout -b feature/NAME`
-3. Follow commit patterns
-4. Open a Pull Request explaining the problem solved or feature made, if exists, append screenshot of visual modifications and wait for the review!
-
-<h3>Documentations that might help</h3>
-
-[📝 How to create a Pull Request](https://www.atlassian.com/br/git/tutorials/making-a-pull-request)
-
-[💾 Commit pattern](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716)
-.
