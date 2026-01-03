@@ -1,15 +1,21 @@
 import { useState } from "react";
 import Antigravity from "../components/Antigravity";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { toLogin } from "../data/Login";
 
 const Login = () => {
 
     const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState("");
+    const [cpf, setCpf] = useState("");
     const [password, setPassword] = useState("");
     
     const Login = async () => {
-        const body = {email, password}
+        const body = {cpf, password}
+
+        const res = toLogin(body);
+
+        localStorage.setItem("token", (await res).token);
+        localStorage.setItem("userId", (await res).userId);
     }
     
 
@@ -40,13 +46,13 @@ const Login = () => {
                 <div className="backdrop-blur-3xl border border-white rounded-4xl h-[70vh] w-[30vw] z-10">
                     <div className="flex justify-center items-center flex-col m-10 font-['Segoe_UI',sans-serif]">
                         <input
-                            type="email"
+                            type="number"
                             required
                             autoComplete="off"
-                            placeholder="Email"
+                            placeholder="cpf"
                             className="inputs-star peer w-[90%] rounded-full border-2 border-gray-300 bg-transparent
                                 px-4 py-3 text-base text-white outline-none transition focus:border-white"
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => setCpf(e.target.value)}
                         />
                         <div className="relative w-[90%] mt-6">
                             <input

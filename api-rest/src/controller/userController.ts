@@ -6,19 +6,19 @@ import { jwtConfig } from "../config/jwtConfig.js";
 
 export const newUser = async (req: Request, res: Response) => {
     try {
-        const { name, email, password, balance = 0, keyPix, role = "user",
+        const { name, cpf, email, password, balance = 0, keyPix, role = "user",
             gender, isActive = true, preferences = {} } = req.body;
 
-        if (!name || !email || !password || !gender || !keyPix) {
+        if (!name || !cpf || !email || !password || !gender || !keyPix) {
             return res.status(400).json({
-                message: "Preencha os campos obrigatórios: name, email, password, gender e keyPix."
+                message: "Preencha os campos obrigatórios: name, cpf, email, password, gender e keyPix."
             });
         }
 
-        const existingUser = await userSchema.findOne({ email });
+        const existingUser = await userSchema.findOne({ cpf });
         if (existingUser) {
             return res.status(409).json({
-                message: "Este e-mail já está cadastrado."
+                message: "Este CPF já está cadastrado."
             });
         }
 
@@ -107,11 +107,11 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
     try {
-        const { email, password } = req.body;
+        const { cpf, password } = req.body;
 
-        if (!email || !password) return res.status(400).json({ result: "Preencha email e senha" });
+        if (!cpf || !password) return res.status(400).json({ result: "Preencha email e senha" });
 
-        const user = await userSchema.findOne({ email });
+        const user = await userSchema.findOne({ cpf });
 
         if (!user) return res.status(400).json({ result: "Usuário não encontrado" });
 
@@ -141,11 +141,11 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const updatePassword = async (req: Request, res: Response) => {
     try {
-        const { email, oldPassword, password: newPassword } = req.body;
+        const { id, oldPassword, password: newPassword } = req.body;
 
-        if (!email || !newPassword || !oldPassword) return res.status(400).json({ message: "Campos Obrigátorios faltando" });
+        if (!id || !newPassword || !oldPassword) return res.status(400).json({ message: "Campos Obrigátorios faltando" });
 
-        const user = await userSchema.findOne({ email });
+        const user = await userSchema.findOne({ id });
 
         if (!user) return res.status(400).json({ message: "Usuário não encontrado" });
 
