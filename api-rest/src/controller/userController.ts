@@ -24,7 +24,7 @@ export const newUser = async (req: Request, res: Response) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = await userSchema.create({ name, email, password: hashedPassword, balance, keyPix,
+        const newUser = await userSchema.create({ name, cpf,email, password: hashedPassword, balance, keyPix,
             role, gender, isActive, preferences});
 
         return res.status(201).json({
@@ -32,7 +32,8 @@ export const newUser = async (req: Request, res: Response) => {
             name: newUser.name,
             email: newUser.email,
             role: newUser.role,
-            gender: newUser.gender
+            gender: newUser.gender,
+            preferences: newUser.preferences
         });
 
     } catch (err: any) {
@@ -130,7 +131,8 @@ export const loginUser = async (req: Request, res: Response) => {
             name: user.name,
             email: user.email,
             role: user.role,
-            token: token
+            token: token,
+            preferences: user.preferences
         });
     } catch (err: any) {
         console.error("Erro no login:", err);
