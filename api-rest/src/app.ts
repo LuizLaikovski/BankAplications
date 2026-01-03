@@ -2,9 +2,15 @@ import connectDB from "./db/database.js";
 import express from "express";
 import routesUser from "./routes/routesUser.js";
 import routesTransaction from "./routes/routesTransaction.js";
+import cors from "cors";
 
 const app = express();
 const port = 8080;
+
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+}));
 
 app.use(express.json());
 
