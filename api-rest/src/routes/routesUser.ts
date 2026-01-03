@@ -1,7 +1,10 @@
 import express from "express";
 import { deleteUser, favotiteKeyPix, getUser, getUserAll, loginUser, newUser, unFavoriteKeyPix, updatePassword, updateUser } from "../controller/userController.js";
+import { apiKeyGuard } from "../middlewares/apiKey.middleware.js";
 
 const routesUser = express.Router();
+
+routesUser.use(apiKeyGuard);
 
 routesUser.post("/newUser", newUser);
 routesUser.post("/login", loginUser);
