@@ -1,23 +1,44 @@
 import { useState } from "react";
 import Antigravity from "../components/Antigravity";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { toLogin } from "../data/Login";
+import { toLogin, type responseLogin } from "../data/Login";
+import { useNavigate } from "react-router";
+import Loading from "../components/Loading";
 
 const Login = () => {
-
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [cpf, setCpf] = useState("");
     const [password, setPassword] = useState("");
-    
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
     const Login = async () => {
-        const body = {cpf, password}
+        try {
+            setLoading(true);
+            const body = { cpf, password }
 
-        const res = toLogin(body);
+            const res: responseLogin = await toLogin(body);
 
-        localStorage.setItem("token", (await res).token);
-        localStorage.setItem("userId", (await res).userId);
+            if (!res.token) {
+                setError("Erro ao fazer login. Verifique suas credenciais.");
+                return;
+            }
+
+            localStorage.setItem("token", res.token);
+            localStorage.setItem("userId", res.id);
+            localStorage.setItem("userName", res.name);
+            localStorage.setItem("userEmail", res.email);
+            localStorage.setItem("userRole", res.role);
+
+            navigate("/home");
+        } catch {
+            setError("Erro ao fazer login. Verifique suas credenciais.");
+        } finally {
+            setLoading(false);
+        }
     }
-    
+
 
     return (<>
         <main
@@ -43,13 +64,17 @@ const Login = () => {
                 color="#FF6AD5"
                 className="w-full h-screen flex items-center justify-center"
             >
-                <div className="backdrop-blur-3xl border border-white rounded-4xl h-[70vh] w-[30vw] z-10">
-                    <div className="flex justify-center items-center flex-col m-10 font-['Segoe_UI',sans-serif]">
+                {loading && <Loading/>}
+                <div className="flex backdrop-blur-3xl border border-white rounded-4xl h-[70vh] w-[60vw] z-10">
+                    <div className="text-center h-full">
+                        <img src="logoBank.png" alt="Logo Bank" className="h-full rounded-l-4xl border border-white" />
+                    </div>
+                    <div className="flex justify-center items-center flex-col w-[44%] font-['Segoe_UI',sans-serif]">
                         <input
-                            type="number"
+                            type="text"
                             required
                             autoComplete="off"
-                            placeholder="cpf"
+                            placeholder="Cpf"
                             className="inputs-star peer w-[90%] rounded-full border-2 border-gray-300 bg-transparent
                                 px-4 py-3 text-base text-white outline-none transition focus:border-white"
                             onChange={(e) => setCpf(e.target.value)}
@@ -74,6 +99,9 @@ const Login = () => {
                                 {showPassword ? <FaEyeSlash color="white" /> : <FaEye color="white" />}
                             </button>
                         </div>
+
+                        <p className="text-red-600 mt-6 text-center">{error}</p>
+                        
 
                         <button
                             className="
