@@ -9,7 +9,7 @@ export const newUser = async (req: Request, res: Response) => {
         const { name, cpf, email, password, balance = 0, keyPix, role = "user",
             gender, isActive = true, preferences = {} } = req.body;
 
-        if (!name || !cpf || !email || !password || !gender || !keyPix) {
+        if (!name || !cpf || !email || !password || !gender) {
             return res.status(400).json({
                 message: "Preencha os campos obrigatórios: name, cpf, email, password, gender e keyPix."
             });
@@ -24,8 +24,10 @@ export const newUser = async (req: Request, res: Response) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = await userSchema.create({ name, cpf,email, password: hashedPassword, balance, keyPix,
-            role, gender, isActive, preferences});
+        const newUser = await userSchema.create({
+            name, cpf, email, password: hashedPassword, balance, keyPix,
+            role, gender, isActive, preferences
+        });
 
         return res.status(201).json({
             id: newUser._id,
@@ -172,6 +174,30 @@ export const updatePassword = async (req: Request, res: Response) => {
 };
 
 
+export const registerKeyPix = async (req: Request, res: Response) => {
+    try {
+        const { idUser, keyPix } = req.body;
+
+        if (!idUser || !keyPix) return res.status(400).json({ message: "Dados importantes faltando" });
+
+        const user = await userSchema.findById(idUser);
+
+        if (!user) return res.status(400).json({ message: "Usuario não encontrado" });
+
+        user.keyPix = keyPix;
+
+        await user.save();
+
+        return res.status(200).json({
+            message: "Chave pix cadastrada com sucesso!",
+            keyPix: user.keyPix
+        });
+    } catch (error) {
+        return res.status(500).json({ message: `Houve um erro interno do servidor: ${error}` });
+    }
+}
+
+
 export const favotiteKeyPix = async (req: Request, res: Response) => {
     try {
         const { idUser, keyPix } = req.body;
@@ -200,7 +226,25 @@ export const favotiteKeyPix = async (req: Request, res: Response) => {
     } catch (error) {
         return res.status(500).json({ message: `Houve erro interno do servidor: ${error}` })
     }
-}
+};
+
+
+export const getFavoriteKeysPix = async (req: Request, res: Response) => {
+    try {
+        const idUser = req.params.idUser;
+
+        if (!idUser) return res.status(400).json({ message: "Id do usuário não informado" });
+
+        const user = await userSchema.findById(idUser);
+        if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
+
+        return res.status(200).json({
+            favoriteKeys: user.favoriteKeys || []
+        });
+    } catch (error) {
+        return res.status(500).json({ message: `Houve um erro interno do servidor: ${error}` });
+    }
+};
 
 
 export const unFavoriteKeyPix = async (req: Request, res: Response) => {
