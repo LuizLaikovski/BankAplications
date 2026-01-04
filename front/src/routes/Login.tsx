@@ -64,12 +64,18 @@ const Login = () => {
                 color="#FF6AD5"
                 className="w-full h-screen flex items-center justify-center"
             >
-                {loading && <Loading/>}
+                {loading && <Loading />}
                 <div className="flex backdrop-blur-3xl border border-white rounded-4xl h-[70vh] w-[60vw] z-10">
                     <div className="text-center h-full">
                         <img src="logoBank.png" alt="Logo Bank" className="h-full rounded-l-4xl border border-white" />
                     </div>
-                    <div className="flex justify-center items-center flex-col w-[44%] font-['Segoe_UI',sans-serif]">
+                    <form
+                        className="flex justify-center items-center flex-col w-[44%] font-['Segoe_UI',sans-serif]"
+                        onSubmit={e => { e.preventDefault(); Login(); }}
+                    >
+
+                        <h1 className="text-white text-4xl mb-10 font-['Segoe_UI',sans-serif] font-bold" >Login</h1>
+
                         <input
                             type="text"
                             required
@@ -101,9 +107,10 @@ const Login = () => {
                         </div>
 
                         <p className="text-red-600 mt-6 text-center">{error}</p>
-                        
+
 
                         <button
+                            type="submit"
                             className="
                                 group relative border-none bg-transparent p-0 cursor-pointer
                                 outline-offset-4 outline-pink-600
@@ -113,7 +120,6 @@ const Login = () => {
                                 focus:outline-none focus-visible:outline
                                 mt-10 w-[80%]
                             "
-                            onClick={Login}
                         >
                             {/* Shadow */}
                             <span
@@ -167,7 +173,7 @@ const Login = () => {
                                 Login
                             </span>
                         </button>
-                    </div>
+                    </form>
                 </div>
 
             </Antigravity>
