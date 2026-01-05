@@ -6,12 +6,15 @@ import { jwtConfig } from "../config/jwtConfig.js";
 
 export const newUser = async (req: Request, res: Response) => {
     try {
-        const { name, cpf, email, password, balance = 0, keyPix, role = "user",
-            gender, isActive = true, preferences = {} } = req.body;
+        const { name, cpf, email, password, balance = 0, keyPix = "", role = "user",
+            gender, isActive = true, preferences = {
+                theme: "white",
+                language: "pt-BR"
+            } } = req.body;
 
         if (!name || !cpf || !email || !password || !gender) {
             return res.status(400).json({
-                message: "Preencha os campos obrigatórios: name, cpf, email, password, gender e keyPix."
+                message: "Preencha os campos obrigatórios: name, cpf, email, password, gender."
             });
         }
 
@@ -29,7 +32,7 @@ export const newUser = async (req: Request, res: Response) => {
             role, gender, isActive, preferences
         });
 
-        return res.status(201).json({
+        return res.status(200).json({
             id: newUser._id,
             name: newUser.name,
             email: newUser.email,
