@@ -8,8 +8,9 @@ const app = express();
 const port = 8080;
 
 app.use(cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+    origin: ["http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "x-api-key", "Authorization"],
 }));
 
 app.use(express.json());
